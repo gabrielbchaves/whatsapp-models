@@ -42,6 +42,7 @@ from whatsapp_models.messages.interactive import (
 )
 from whatsapp_models.messages.location import LocationMessage, LocationObject
 from whatsapp_models.messages.media import (
+    AudioMediaObject,
     AudioMessage,
     DocumentMessage,
     ImageMessage,
@@ -49,6 +50,7 @@ from whatsapp_models.messages.media import (
     VideoMessage,
 )
 from whatsapp_models.messages.reaction import ReactionMessage, ReactionObject
+from whatsapp_models.messages.status import MessageStatusUpdate, TypingIndicatorContent
 from whatsapp_models.messages.template import TemplateLanguage, TemplateMessage, TemplateObject
 from whatsapp_models.messages.text import TextMessage, TextObject
 from whatsapp_models.messages.unions import OutgoingMessage
@@ -89,6 +91,7 @@ from whatsapp_models.webhooks.statuses import DeliveryStatus, MessageStatus
 __all__ = [
     "AccountUpdateEvent",
     "Address",
+    "AudioMediaObject",
     "AudioMessage",
     "BodyComponent",
     "Button",
@@ -135,6 +138,7 @@ __all__ = [
     "MediaUploadResponse",
     "MessageBase",
     "MessageStatus",
+    "MessageStatusUpdate",
     "MessagingProduct",
     "Metadata",
     "OtpButton",
@@ -161,6 +165,7 @@ __all__ = [
     "TextMessage",
     "TextObject",
     "ThroughputLevel",
+    "TypingIndicatorContent",
     "UrlButton",
     "UrlEntry",
     "Value",

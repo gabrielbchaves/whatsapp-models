@@ -1,5 +1,14 @@
 # Changelog
 
+## v0.2.0
+
+### Added
+
+- `AudioMediaObject` — subclass of `MediaObject` with `voice: bool = False` for sending WhatsApp PTT (push-to-talk) voice messages
+- `ButtonType.VOICE_CALL` — new template button type for voice call actions
+- `MessageStatusUpdate` — model for marking an incoming message as read (`status: "read"`)
+- `TypingIndicatorContent` — optional typing indicator payload to include with a read receipt
+
 ## v0.1.0 — Initial Release
 
 First public release of `whatsapp-models`, a fully-typed Pydantic v2 library for the WhatsApp Business API (v23.0).

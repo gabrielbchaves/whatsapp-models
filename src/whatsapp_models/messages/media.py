@@ -46,6 +46,15 @@ class DocumentObject(CaptionedMediaObject):
     filename: Annotated[str | None, Field(description="Filename shown to the recipient for the document.")] = None
 
 
+class AudioMediaObject(MediaObject):
+    """Audio media object with optional voice flag for PTT (push-to-talk) messages."""
+
+    voice: Annotated[
+        bool,
+        Field(description="Set to True when sending a WhatsApp voice message (PTT). Omit or False for regular audio."),
+    ] = False
+
+
 class AudioMessage(MessageBase):
     """Outgoing WhatsApp audio message."""
 
@@ -53,7 +62,7 @@ class AudioMessage(MessageBase):
         Literal[MessageType.audio],
         Field(description="Message type discriminator."),
     ] = MessageType.audio
-    audio: Annotated[MediaObject, Field(description="Audio media object.")]
+    audio: Annotated[AudioMediaObject, Field(description="Audio media object.")]
 
 
 class ImageMessage(MessageBase):

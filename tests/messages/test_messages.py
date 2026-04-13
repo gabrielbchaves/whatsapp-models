@@ -16,6 +16,7 @@ from whatsapp_models.messages.interactive import (
 )
 from whatsapp_models.messages.location import LocationMessage
 from whatsapp_models.messages.media import (
+    AudioMediaObject,
     AudioMessage,
     DocumentMessage,
     ImageMessage,
@@ -23,6 +24,7 @@ from whatsapp_models.messages.media import (
     VideoMessage,
 )
 from whatsapp_models.messages.reaction import ReactionMessage
+from whatsapp_models.messages.status import MessageStatusUpdate, TypingIndicatorContent
 from whatsapp_models.messages.template import TemplateMessage
 from whatsapp_models.messages.text import TextMessage
 from whatsapp_models.messages.unions import OutgoingMessage
@@ -84,6 +86,21 @@ class TestAudioMessage:
         """AudioMessage raises ValidationError when neither id nor link is provided."""
         with pytest.raises(ValidationError):
             AudioMessage(**BASE, audio={})
+
+    def test_audio_field_is_audio_media_object(self):
+        """AudioMessage.audio is an AudioMediaObject instance."""
+        msg = AudioMessage(**BASE, audio={"id": "abc123"})
+        assert isinstance(msg.audio, AudioMediaObject)
+
+    def test_voice_defaults_false(self):
+        """AudioMessage.audio.voice defaults to False."""
+        msg = AudioMessage(**BASE, audio={"id": "abc123"})
+        assert msg.audio.voice is False
+
+    def test_voice_true(self):
+        """AudioMessage.audio.voice can be set to True for PTT messages."""
+        msg = AudioMessage(**BASE, audio={"id": "abc123", "voice": True})
+        assert msg.audio.voice is True
 
 
 class TestImageMessage:
@@ -371,3 +388,32 @@ class TestOutgoingMessageUnion:
         """OutgoingMessage raises ValidationError for unknown type values."""
         with pytest.raises(ValidationError):
             self.adapter.validate_python({**BASE, "type": "unknown", "text": {"body": "hi"}})
+
+
+class TestMessageStatusUpdate:
+    def test_basic(self):
+        """MessageStatusUpdate stores message_id with read status and whatsapp product."""
+        update = MessageStatusUpdate(message_id="wamid.abc123")
+        assert update.status == "read"
+        assert update.messaging_product == "whatsapp"
+        assert update.message_id == "wamid.abc123"
+        assert update.typing_indicator is None
+
+    def test_with_typing_indicator(self):
+        """MessageStatusUpdate accepts an optional TypingIndicatorContent."""
+        update = MessageStatusUpdate(message_id="wamid.abc123", typing_indicator=TypingIndicatorContent())
+        assert update.typing_indicator is not None
+        assert update.typing_indicator.type == "text"
+
+    def test_typing_indicator_type_fixed(self):
+        """TypingIndicatorContent.type is always 'text'."""
+        content = TypingIndicatorContent()
+        assert content.type == "text"
+
+    def test_serialization(self):
+        """MessageStatusUpdate serializes correctly for the API call."""
+        update = MessageStatusUpdate(message_id="wamid.abc123", typing_indicator=TypingIndicatorContent())
+        data = update.model_dump(exclude_none=False)
+        assert data["status"] == "read"
+        assert data["message_id"] == "wamid.abc123"
+        assert data["typing_indicator"]["type"] == "text"

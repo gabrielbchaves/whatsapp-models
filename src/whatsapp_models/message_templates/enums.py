@@ -60,3 +60,4 @@ class ButtonType(StrEnum):
     FLOW = "FLOW"
     CATALOG = "CATALOG"
     MPM = "MPM"
+    VOICE_CALL = "VOICE_CALL"
