@@ -1,0 +1,71 @@
+[project]
+name = "whatsapp-models"
+version = "0.1.0"
+description = "Pydantic v2 models for the WhatsApp Business API — outgoing messages, incoming webhooks, and template management."
+readme = "README.md"
+authors = [
+    { name = "Gabriel Chaves", email = "gabriel.chaves@olist.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "pydantic>=2.12.5",
+]
+
+[build-system]
+requires = ["uv_build>=0.10.2,<0.11.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "mypy>=1.15.0",
+    "pre-commit>=4.5.1",
+    "pytest>=9.0.2",
+    "pytest-cov>=7.0.0",
+    "ruff>=0.15.7",
+]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 120
+
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = [
+  # annotations — mypy strict mode already covers this
+  "ANN",
+  # docstrings — not enforced in this project
+  "D100", "D104", "D107", "D205", "D400", "D415",
+  # pydoclint — redundant with mypy
+  "DOC",
+  # pandas / numpy / airflow / fastapi — not used
+  "PD", "NPY", "AIR", "FAST",
+  # conflicts with ruff formatter
+  "COM812", "ISC001",
+  # pydantic model classes are self-documenting via field descriptions
+  "D101",
+  # locale codes like zh_CN, pt_BR are standard naming — not mixedCase style violations
+  "N815",
+  # ValueError inside pydantic model_validator is idiomatic — no need to extract message
+  "EM101", "TRY003",
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = [
+  "S101",    # assert allowed in tests
+  "ARG",     # unused arguments (fixtures)
+  "SLF001",  # private member access in tests
+  "PLR2004", # magic values in tests
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["whatsapp_models"]
+
+[tool.ruff.lint.pylint]
+max-args = 8
+
+[tool.mypy]
+strict = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "--cov=whatsapp_models --cov-report=term-missing"
