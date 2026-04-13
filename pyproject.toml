@@ -3,6 +3,7 @@ name = "whatsapp-models"
 version = "0.1.0"
 description = "Pydantic v2 models for the WhatsApp Business API — outgoing messages, incoming webhooks, and template management."
 readme = "README.md"
+license = { file = "LICENSE" }
 authors = [
     { name = "Gabriel Chaves", email = "gabriel.chaves@olist.com" }
 ]
