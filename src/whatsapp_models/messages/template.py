@@ -33,6 +33,10 @@ class DocumentParameter(BaseModel):
     model_config = ConfigDict(validate_by_name=True, validate_by_alias=True)
 
     type: Annotated[Literal["document"], Field(description="Parameter type discriminator.")] = "document"
+    parameter_name: Annotated[
+        str | None,
+        Field(description="Named parameter identifier as defined in the template. Used with named-variable templates."),
+    ] = None
     document: Annotated[MediaObject, Field(description="Document media object.")]
 
 
@@ -42,6 +46,10 @@ class ImageParameter(BaseModel):
     model_config = ConfigDict(validate_by_name=True, validate_by_alias=True)
 
     type: Annotated[Literal["image"], Field(description="Parameter type discriminator.")] = "image"
+    parameter_name: Annotated[
+        str | None,
+        Field(description="Named parameter identifier as defined in the template. Used with named-variable templates."),
+    ] = None
     image: Annotated[MediaObject, Field(description="Image media object.")]
 
 
@@ -51,6 +59,10 @@ class VideoParameter(BaseModel):
     model_config = ConfigDict(validate_by_name=True, validate_by_alias=True)
 
     type: Annotated[Literal["video"], Field(description="Parameter type discriminator.")] = "video"
+    parameter_name: Annotated[
+        str | None,
+        Field(description="Named parameter identifier as defined in the template. Used with named-variable templates."),
+    ] = None
     video: Annotated[MediaObject, Field(description="Video media object.")]
 
 

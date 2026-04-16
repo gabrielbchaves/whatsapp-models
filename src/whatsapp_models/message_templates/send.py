@@ -50,6 +50,10 @@ class TextParameter(BaseModel):
     model_config = ConfigDict(validate_by_name=True, validate_by_alias=True)
 
     type: Annotated[Literal["text"], Field(description="Parameter type discriminator.")] = "text"
+    parameter_name: Annotated[
+        str | None,
+        Field(description="Named parameter identifier as defined in the template. Used with named-variable templates."),
+    ] = None
     text: Annotated[str, Field(description="Text value for the parameter.")]
 
 
@@ -59,6 +63,10 @@ class CurrencyParameter(BaseModel):
     model_config = ConfigDict(validate_by_name=True, validate_by_alias=True)
 
     type: Annotated[Literal["currency"], Field(description="Parameter type discriminator.")] = "currency"
+    parameter_name: Annotated[
+        str | None,
+        Field(description="Named parameter identifier as defined in the template. Used with named-variable templates."),
+    ] = None
     currency: Annotated[CurrencyObject, Field(description="Currency object.")]
 
 
@@ -68,6 +76,10 @@ class DateTimeParameter(BaseModel):
     model_config = ConfigDict(validate_by_name=True, validate_by_alias=True)
 
     type: Annotated[Literal["date_time"], Field(description="Parameter type discriminator.")] = "date_time"
+    parameter_name: Annotated[
+        str | None,
+        Field(description="Named parameter identifier as defined in the template. Used with named-variable templates."),
+    ] = None
     date_time: Annotated[DateTimeObject, Field(description="DateTime object.")]
 
 
