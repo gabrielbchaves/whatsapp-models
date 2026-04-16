@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.2.1
+
+### Added
+
+- `parameter_name` optional field on all template send parameter types (`TextParameter`, `CurrencyParameter`, `DateTimeParameter`, `DocumentParameter`, `ImageParameter`, `VideoParameter`) — supports named-variable templates as documented by the WhatsApp Business API
+
 ## v0.2.0
 
 ### Added

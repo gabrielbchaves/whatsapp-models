@@ -226,6 +226,47 @@ class TestTemplateMessage:
         with pytest.raises(ValidationError):
             TemplateMessage(**BASE, template={"name": "hello_world"})
 
+    def test_text_parameter_with_parameter_name(self):
+        """TextParameter accepts parameter_name for named-variable templates."""
+        msg = TemplateMessage(
+            **BASE,
+            template={
+                "name": "order_confirmation",
+                "language": {"code": "en_US"},
+                "components": [
+                    {
+                        "type": "body",
+                        "parameters": [
+                            {"type": "text", "parameter_name": "first_name", "text": "Jessica"},
+                            {"type": "text", "parameter_name": "order_number", "text": "SKBUP2-4CPIG9"},
+                        ],
+                    }
+                ],
+            },
+        )
+        params = msg.template.components[0].parameters
+        assert params[0].parameter_name == "first_name"  # type: ignore[union-attr]
+        assert params[0].text == "Jessica"  # type: ignore[union-attr]
+        assert params[1].parameter_name == "order_number"  # type: ignore[union-attr]
+        assert params[1].text == "SKBUP2-4CPIG9"  # type: ignore[union-attr]
+
+    def test_text_parameter_name_optional(self):
+        """TextParameter.parameter_name defaults to None (positional templates still work)."""
+        msg = TemplateMessage(
+            **BASE,
+            template={
+                "name": "hello_world",
+                "language": {"code": "pt_BR"},
+                "components": [
+                    {
+                        "type": "body",
+                        "parameters": [{"type": "text", "text": "valor"}],
+                    }
+                ],
+            },
+        )
+        assert msg.template.components[0].parameters[0].parameter_name is None  # type: ignore[union-attr]
+
 
 class TestInteractiveReplyButtonsMessage:
     def test_basic(self):
