@@ -3,6 +3,7 @@
 doc: https://developers.facebook.com/documentation/business-messaging/whatsapp/business-phone-numbers/phone-numbers
 """
 
+from collections.abc import Sequence
 from enum import StrEnum
 from typing import Annotated, Any
 
@@ -66,7 +67,7 @@ class PhoneNumberList(BaseModel):
 
     model_config = ConfigDict(validate_by_name=True, validate_by_alias=True)
 
-    data: Annotated[list[PhoneNumber], Field(description="List of phone number objects.")]
+    data: Annotated[Sequence[PhoneNumber], Field(description="List of phone number objects.")]
     paging: Annotated[
         dict[str, Any] | None, Field(description="Pagination cursors for traversing large result sets.")
     ] = None

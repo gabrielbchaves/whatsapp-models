@@ -3,6 +3,7 @@
 doc: https://developers.facebook.com/documentation/business-messaging/whatsapp/webhooks/reference/messages/status
 """
 
+from collections.abc import Sequence
 from enum import StrEnum
 from typing import Annotated, Literal
 
@@ -62,4 +63,7 @@ class MessageStatus(BaseModel):
     group_id: Annotated[str | None, Field(description="Group ID, present when the message was sent to a group.")] = None
     conversation: Annotated[Conversation | None, Field(description="Conversation window metadata.")] = None
     pricing: Annotated[Pricing | None, Field(description="Pricing information for this message.")] = None
-    errors: Annotated[list[WebhookError], Field(description="List of errors, present when status is 'failed'.")] = []
+    errors: Annotated[
+        Sequence[WebhookError],
+        Field(description="List of errors, present when status is 'failed'."),
+    ] = []

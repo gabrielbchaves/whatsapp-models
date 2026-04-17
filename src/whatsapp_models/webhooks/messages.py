@@ -3,6 +3,7 @@
 doc: https://developers.facebook.com/documentation/business-messaging/whatsapp/webhooks/reference/messages
 """
 
+from collections.abc import Sequence
 from enum import StrEnum
 from typing import Annotated, Literal
 
@@ -148,12 +149,12 @@ class IncomingContactEntry(BaseModel):
     model_config = ConfigDict(validate_by_name=True, validate_by_alias=True)
 
     name: Annotated[ContactName | None, Field(description="Name information of the contact.")] = None
-    addresses: Annotated[list[Address], Field(description="List of physical addresses.")] = []
+    addresses: Annotated[Sequence[Address], Field(description="List of physical addresses.")] = []
     birthday: Annotated[str | None, Field(description="Birthday in YYYY-MM-DD format.")] = None
-    emails: Annotated[list[EmailEntry], Field(description="List of email addresses.")] = []
+    emails: Annotated[Sequence[EmailEntry], Field(description="List of email addresses.")] = []
     org: Annotated[dict[str, str] | None, Field(description="Organization info.")] = None
-    phones: Annotated[list[PhoneEntry], Field(description="List of phone numbers.")] = []
-    urls: Annotated[list[UrlEntry], Field(description="List of URLs.")] = []
+    phones: Annotated[Sequence[PhoneEntry], Field(description="List of phone numbers.")] = []
+    urls: Annotated[Sequence[UrlEntry], Field(description="List of URLs.")] = []
 
 
 class ButtonReply(BaseModel):
@@ -264,7 +265,7 @@ class OrderObject(BaseModel):
 
     catalog_id: Annotated[str, Field(description="ID of the WhatsApp catalog.")]
     text: Annotated[str, Field(description="Optional note from the buyer.")]
-    product_items: Annotated[list[OrderProductItem], Field(description="List of ordered products.")]
+    product_items: Annotated[Sequence[OrderProductItem], Field(description="List of ordered products.")]
 
 
 class SystemObject(BaseModel):
@@ -382,7 +383,7 @@ class IncomingContactsMessage(IncomingMessageBase):
     type: Annotated[Literal[MessageType.contacts], Field(description="Message type discriminator.")] = (
         MessageType.contacts
     )
-    contacts: Annotated[list[IncomingContactEntry], Field(min_length=1, description="List of shared contacts.")]
+    contacts: Annotated[Sequence[IncomingContactEntry], Field(min_length=1, description="List of shared contacts.")]
 
 
 class IncomingInteractiveMessage(IncomingMessageBase):
@@ -417,7 +418,7 @@ class IncomingUnsupportedMessage(IncomingMessageBase):
     type: Annotated[Literal[MessageType.unsupported], Field(description="Message type discriminator.")] = (
         MessageType.unsupported
     )
-    errors: Annotated[list[IncomingError], Field(description="Errors explaining why the message is unsupported.")]
+    errors: Annotated[Sequence[IncomingError], Field(description="Errors explaining why the message is unsupported.")]
 
 
 class IncomingUnknownMessage(IncomingMessageBase):
@@ -429,7 +430,7 @@ class IncomingUnknownMessage(IncomingMessageBase):
     type: Annotated[Literal[MessageType.unknown], Field(description="Message type discriminator.")] = (
         MessageType.unknown
     )
-    errors: Annotated[list[IncomingError], Field(description="Errors explaining why the message is unknown.")]
+    errors: Annotated[Sequence[IncomingError], Field(description="Errors explaining why the message is unknown.")]
 
 
 class IncomingOrderMessage(IncomingMessageBase):

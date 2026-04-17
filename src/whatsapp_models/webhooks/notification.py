@@ -3,6 +3,7 @@
 doc: https://developers.facebook.com/documentation/business-messaging/whatsapp/webhooks/overview
 """
 
+from collections.abc import Sequence
 from enum import StrEnum
 from typing import Annotated, Any
 
@@ -61,8 +62,8 @@ class GroupEvent(BaseModel):
     request_id: Annotated[str, Field(description="Unique ID for this event request.")]
     subject: Annotated[str | None, Field(description="Group subject, present for create/settings events.")] = None
     description: Annotated[str | None, Field(description="Group description, present for create events.")] = None
-    added_participants: Annotated[list[GroupParticipant], Field(description="Participants added.")] = []
-    removed_participants: Annotated[list[GroupParticipant], Field(description="Participants removed.")] = []
+    added_participants: Annotated[Sequence[GroupParticipant], Field(description="Participants added.")] = []
+    removed_participants: Annotated[Sequence[GroupParticipant], Field(description="Participants removed.")] = []
 
 
 class Value(BaseModel):
@@ -72,14 +73,14 @@ class Value(BaseModel):
 
     messaging_product: Annotated[str, Field(description="Always 'whatsapp'.")]
     metadata: Annotated[Metadata, Field(description="Metadata identifying the receiving phone number.")]
-    contacts: Annotated[list[dict[str, Any]], Field(description="Contact profile information for the sender.")] = []
+    contacts: Annotated[Sequence[dict[str, Any]], Field(description="Contact profile information for the sender.")] = []
     messages: Annotated[
-        list[IncomingGroupMessage | IncomingMessage],
+        Sequence[IncomingGroupMessage | IncomingMessage],
         Field(description="List of incoming messages. Group messages are resolved before direct messages."),
     ] = []
-    statuses: Annotated[list[MessageStatus], Field(description="List of message delivery status updates.")] = []
-    errors: Annotated[list[WebhookError], Field(description="List of errors reported by the platform.")] = []
-    groups: Annotated[list[GroupEvent], Field(description="List of group lifecycle events.")] = []
+    statuses: Annotated[Sequence[MessageStatus], Field(description="List of message delivery status updates.")] = []
+    errors: Annotated[Sequence[WebhookError], Field(description="List of errors reported by the platform.")] = []
+    groups: Annotated[Sequence[GroupEvent], Field(description="List of group lifecycle events.")] = []
 
 
 class Change(BaseModel):
@@ -97,7 +98,7 @@ class Entry(BaseModel):
     model_config = ConfigDict(validate_by_name=True, validate_by_alias=True)
 
     id: Annotated[str, Field(description="WhatsApp Business Account ID.")]
-    changes: Annotated[list[Change], Field(description="List of changes included in this entry.")]
+    changes: Annotated[Sequence[Change], Field(description="List of changes included in this entry.")]
 
 
 class WebhookNotification(BaseModel):
@@ -109,4 +110,4 @@ class WebhookNotification(BaseModel):
     model_config = ConfigDict(validate_by_name=True, validate_by_alias=True)
 
     object: Annotated[str, Field(description="Always 'whatsapp_business_account'.")]
-    entry: Annotated[list[Entry], Field(description="List of entries, one per WhatsApp Business Account.")]
+    entry: Annotated[Sequence[Entry], Field(description="List of entries, one per WhatsApp Business Account.")]

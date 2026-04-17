@@ -3,6 +3,7 @@
 doc: https://developers.facebook.com/documentation/business-messaging/whatsapp/messages/contacts-messages
 """
 
+from collections.abc import Sequence
 from typing import Annotated, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
@@ -72,15 +73,15 @@ class Contact(BaseModel):
     model_config = ConfigDict(validate_by_name=True, validate_by_alias=True)
 
     name: Annotated[ContactName, Field(description="Name fields of the contact.")]
-    addresses: Annotated[list[Address], Field(description="List of physical addresses.")] = []
+    addresses: Annotated[Sequence[Address], Field(description="List of physical addresses.")] = []
     birthday: Annotated[str | None, Field(description="Birthday in YYYY-MM-DD format.")] = None
-    emails: Annotated[list[EmailEntry], Field(description="List of email addresses.")] = []
+    emails: Annotated[Sequence[EmailEntry], Field(description="List of email addresses.")] = []
     org: Annotated[
         dict[str, str] | None,
         Field(description="Organization info with optional 'company', 'department', 'title'."),
     ] = None
-    phones: Annotated[list[PhoneEntry], Field(description="List of phone numbers.")] = []
-    urls: Annotated[list[UrlEntry], Field(description="List of URLs.")] = []
+    phones: Annotated[Sequence[PhoneEntry], Field(description="List of phone numbers.")] = []
+    urls: Annotated[Sequence[UrlEntry], Field(description="List of URLs.")] = []
 
 
 class ContactsMessage(MessageBase):
@@ -91,6 +92,6 @@ class ContactsMessage(MessageBase):
         Field(description="Message type discriminator."),
     ] = MessageType.contacts
     contacts: Annotated[
-        list[Contact],
+        Sequence[Contact],
         Field(min_length=1, description="List of contacts to send. At least one required."),
     ]
