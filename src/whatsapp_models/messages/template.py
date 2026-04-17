@@ -7,6 +7,7 @@ that depend on messages.media, the send component, and the message envelope.
 doc: https://developers.facebook.com/documentation/business-messaging/whatsapp/messages/template-messages
 """
 
+from collections.abc import Sequence
 from typing import Annotated, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
@@ -91,7 +92,7 @@ class TemplateSendComponent(BaseModel):
         Field(description="Zero-based index of the button. Required when type is 'button'."),
     ] = None
     parameters: Annotated[
-        list[TemplateParameter] | list[ButtonParameter],
+        Sequence[TemplateParameter] | Sequence[ButtonParameter],
         Field(description="List of parameter values to fill the component."),
     ] = []
 
@@ -104,7 +105,7 @@ class TemplateObject(BaseModel):
     name: Annotated[str, Field(description="Name of the approved template to send.")]
     language: Annotated[TemplateLanguage, Field(description="Language in which to send the template.")]
     components: Annotated[
-        list[TemplateSendComponent], Field(description="List of components with filled parameters.")
+        Sequence[TemplateSendComponent], Field(description="List of components with filled parameters.")
     ] = []
 
 

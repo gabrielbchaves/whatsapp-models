@@ -3,6 +3,7 @@
 doc: https://developers.facebook.com/documentation/business-messaging/whatsapp/templates/components
 """
 
+from collections.abc import Sequence
 from typing import Annotated, Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
@@ -85,7 +86,7 @@ class UrlButton(BaseModel):
         Field(description="URL opened when the button is tapped. Supports one {{1}} variable."),
     ]
     example: Annotated[
-        list[str],
+        Sequence[str],
         Field(description="Example value for the URL variable."),
     ] = []
 
@@ -154,7 +155,7 @@ class ButtonsComponent(BaseModel):
         Field(description="Component type discriminator."),
     ] = ComponentType.BUTTONS
     buttons: Annotated[
-        list[Button],
+        Sequence[Button],
         Field(min_length=1, description="List of buttons. Max 10 total, with specific limits per type combination."),
     ]
 

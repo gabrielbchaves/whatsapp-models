@@ -5,6 +5,7 @@ docs:
   manage: https://developers.facebook.com/documentation/business-messaging/whatsapp/templates/template-management
 """
 
+from collections.abc import Sequence
 from typing import Annotated
 
 from pydantic import BaseModel, ConfigDict, Field
@@ -28,7 +29,7 @@ class CreateTemplateRequest(BaseModel):
         Field(description="Template category that determines pricing and policy rules."),
     ]
     components: Annotated[
-        list[TemplateComponent],
+        Sequence[TemplateComponent],
         Field(description="List of template components: HEADER, BODY, FOOTER, BUTTONS."),
     ] = []
     allow_category_change: Annotated[

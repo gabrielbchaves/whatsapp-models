@@ -13,6 +13,7 @@ docs:
   location request: https://developers.facebook.com/documentation/business-messaging/whatsapp/messages/interactive-location-request-messages
 """
 
+from collections.abc import Sequence
 from typing import Annotated, Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
@@ -79,7 +80,7 @@ class ReplyButtonsAction(BaseModel):
     model_config = ConfigDict(validate_by_name=True, validate_by_alias=True)
 
     buttons: Annotated[
-        list[Button],
+        Sequence[Button],
         Field(min_length=1, max_length=3, description="List of reply buttons. Min 1, max 3."),
     ]
 
@@ -117,7 +118,7 @@ class ListSection(BaseModel):
         str | None,
         Field(description="Section title, required when more than one section is present.", max_length=24),
     ] = None
-    rows: Annotated[list[ListRow], Field(description="List of selectable rows in this section.")]
+    rows: Annotated[Sequence[ListRow], Field(description="List of selectable rows in this section.")]
 
 
 class ListAction(BaseModel):
@@ -127,7 +128,7 @@ class ListAction(BaseModel):
 
     button: Annotated[str, Field(description="Label of the button that opens the list. Max 20 characters.")]
     sections: Annotated[
-        list[ListSection],
+        Sequence[ListSection],
         Field(min_length=1, max_length=10, description="List of sections. Min 1, max 10."),
     ]
 
@@ -268,7 +269,7 @@ class ProductSection(BaseModel):
 
     title: Annotated[str | None, Field(description="Section title.", max_length=24)] = None
     product_items: Annotated[
-        list[dict[str, str]],
+        Sequence[dict[str, str]],
         Field(min_length=1, max_length=30, description="List of products. Each item needs 'product_retailer_id'."),
     ]
 
@@ -301,7 +302,7 @@ class ProductListAction(BaseModel):
 
     catalog_id: Annotated[str, Field(description="ID of the WhatsApp catalog.")]
     sections: Annotated[
-        list[ProductSection],
+        Sequence[ProductSection],
         Field(min_length=1, max_length=10, description="List of product sections."),
     ]
 

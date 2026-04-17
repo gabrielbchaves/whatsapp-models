@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.2.2
+
+### Changed
+
+- Replace `list[...]` with `Sequence[...]` on all Pydantic model fields for covariance and immutability
+
 ## v0.2.1
 
 ### Added
