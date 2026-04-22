@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.2.3
+
+### Added
+
+- `NotificationContactProfile` — model for the `profile` field inside a webhook contact entry (`name: str`)
+- `NotificationContact` — typed model for entries in `Value.contacts` (`wa_id`, `user_id`, `profile`), replacing `dict[str, Any]`
+
 ## v0.2.2
 
 ### Changed

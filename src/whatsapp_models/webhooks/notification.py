@@ -5,7 +5,7 @@ doc: https://developers.facebook.com/documentation/business-messaging/whatsapp/w
 
 from collections.abc import Sequence
 from enum import StrEnum
-from typing import Annotated, Any
+from typing import Annotated
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -66,21 +66,57 @@ class GroupEvent(BaseModel):
     removed_participants: Annotated[Sequence[GroupParticipant], Field(description="Participants removed.")] = []
 
 
+class NotificationContactProfile(BaseModel):
+    """Profile information included in a webhook contact entry."""
+
+    model_config = ConfigDict(validate_by_name=True, validate_by_alias=True)
+
+    name: Annotated[str, Field(description="Display name of the contact.")]
+
+
+class NotificationContact(BaseModel):
+    """Sender profile information included in a webhook Value object."""
+
+    model_config = ConfigDict(validate_by_name=True, validate_by_alias=True)
+
+    wa_id: Annotated[str, Field(description="WhatsApp ID of the sender.")]
+    user_id: Annotated[str | None, Field(description="Platform user ID of the sender.")] = None
+    profile: Annotated[
+        NotificationContactProfile | None,
+        Field(description="Profile information of the sender."),
+    ] = None
+
+
 class Value(BaseModel):
     """Value object containing the actual notification payload inside a Change."""
 
     model_config = ConfigDict(validate_by_name=True, validate_by_alias=True)
 
     messaging_product: Annotated[str, Field(description="Always 'whatsapp'.")]
-    metadata: Annotated[Metadata, Field(description="Metadata identifying the receiving phone number.")]
-    contacts: Annotated[Sequence[dict[str, Any]], Field(description="Contact profile information for the sender.")] = []
+    metadata: Annotated[
+        Metadata,
+        Field(description="Metadata identifying the receiving phone number."),
+    ]
+    contacts: Annotated[
+        Sequence[NotificationContact],
+        Field(description="Contact profile information for the sender."),
+    ] = []
     messages: Annotated[
         Sequence[IncomingGroupMessage | IncomingMessage],
         Field(description="List of incoming messages. Group messages are resolved before direct messages."),
     ] = []
-    statuses: Annotated[Sequence[MessageStatus], Field(description="List of message delivery status updates.")] = []
-    errors: Annotated[Sequence[WebhookError], Field(description="List of errors reported by the platform.")] = []
-    groups: Annotated[Sequence[GroupEvent], Field(description="List of group lifecycle events.")] = []
+    statuses: Annotated[
+        Sequence[MessageStatus],
+        Field(description="List of message delivery status updates."),
+    ] = []
+    errors: Annotated[
+        Sequence[WebhookError],
+        Field(description="List of errors reported by the platform."),
+    ] = []
+    groups: Annotated[
+        Sequence[GroupEvent],
+        Field(description="List of group lifecycle events."),
+    ] = []
 
 
 class Change(BaseModel):
