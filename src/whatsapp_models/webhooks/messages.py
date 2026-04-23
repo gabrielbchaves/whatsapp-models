@@ -67,58 +67,44 @@ class IncomingTextObject(BaseModel):
     body: Annotated[str, Field(description="Text body of the message.")]
 
 
-class IncomingAudioObject(BaseModel):
-    """Audio media reference for an incoming audio message."""
+class IncomingMediaObject(BaseModel):
+    """Base class for incoming media payload objects."""
 
     model_config = ConfigDict(validate_by_name=True, validate_by_alias=True)
 
     id: Annotated[str, Field(description="Media asset ID assigned by WhatsApp.")]
-    mime_type: Annotated[str, Field(description="MIME type of the audio file.")]
-    sha256: Annotated[str, Field(description="SHA-256 hash of the audio file.")]
+    mime_type: Annotated[str, Field(description="MIME type of the media file.")]
+    sha256: Annotated[str, Field(description="SHA-256 hash of the media file.")]
+    url: Annotated[str, Field(description="Temporary URL to download the media asset.")]
+
+
+class IncomingAudioObject(IncomingMediaObject):
+    """Audio media reference for an incoming audio message."""
+
     voice: Annotated[bool, Field(description="Whether this audio was recorded as a voice message.")]
 
 
-class IncomingImageObject(BaseModel):
+class IncomingImageObject(IncomingMediaObject):
     """Image media reference for an incoming image message."""
 
-    model_config = ConfigDict(validate_by_name=True, validate_by_alias=True)
-
-    id: Annotated[str, Field(description="Media asset ID assigned by WhatsApp.")]
-    mime_type: Annotated[str, Field(description="MIME type of the image file.")]
-    sha256: Annotated[str, Field(description="SHA-256 hash of the image file.")]
     caption: Annotated[str | None, Field(description="Caption attached to the image, if any.")] = None
 
 
-class IncomingVideoObject(BaseModel):
+class IncomingVideoObject(IncomingMediaObject):
     """Video media reference for an incoming video message."""
 
-    model_config = ConfigDict(validate_by_name=True, validate_by_alias=True)
-
-    id: Annotated[str, Field(description="Media asset ID assigned by WhatsApp.")]
-    mime_type: Annotated[str, Field(description="MIME type of the video file.")]
-    sha256: Annotated[str, Field(description="SHA-256 hash of the video file.")]
     caption: Annotated[str | None, Field(description="Caption attached to the video, if any.")] = None
 
 
-class IncomingDocumentObject(BaseModel):
+class IncomingDocumentObject(IncomingMediaObject):
     """Document media reference for an incoming document message."""
 
-    model_config = ConfigDict(validate_by_name=True, validate_by_alias=True)
-
-    id: Annotated[str, Field(description="Media asset ID assigned by WhatsApp.")]
-    mime_type: Annotated[str, Field(description="MIME type of the document file.")]
-    sha256: Annotated[str, Field(description="SHA-256 hash of the document file.")]
     filename: Annotated[str, Field(description="Original filename of the document.")]
 
 
-class IncomingStickerObject(BaseModel):
+class IncomingStickerObject(IncomingMediaObject):
     """Sticker media reference for an incoming sticker message."""
 
-    model_config = ConfigDict(validate_by_name=True, validate_by_alias=True)
-
-    id: Annotated[str, Field(description="Media asset ID assigned by WhatsApp.")]
-    mime_type: Annotated[str, Field(description="MIME type of the sticker file.")]
-    sha256: Annotated[str, Field(description="SHA-256 hash of the sticker file.")]
     animated: Annotated[bool, Field(description="Whether the sticker is animated.")]
 
 
