@@ -1,5 +1,23 @@
 # Changelog
 
+## v0.2.5
+
+### Added
+
+- All previously unexported public models and enums are now accessible from the top-level `whatsapp_models` package and their respective sub-package `__init__.py` files
+- Common enums (`AddressType`, `Currency`, `EmailType`, `Language`, `MessageType`, `PhoneType`, `UrlType`) exported from top-level
+- All interactive sub-types (`InteractiveBody`, `InteractiveHeader`, `InteractiveFooter`, `ReplyButton`, `ReplyButtonsAction`, `ListRow`, `ListSection`, `ListAction`, `CtaUrlParameters`, `CtaUrlAction`, `FlowParameters`, `FlowAction`, `LocationRequestAction`, `CallPermissionRequestAction`, `CallPermissionRequestInteractive`, `ProductSection`, `ProductAction`, `ProductInteractive`, `ProductListAction`, `ProductListInteractive`)
+- Outgoing media hierarchy (`OutgoingMediaObject`, `CaptionedMediaObject`, `DocumentObject`) exported; `messages/media.py::MediaObject` renamed to `OutgoingMediaObject` to distinguish from `media/media.py::MediaObject`
+- Template parameter and component types (`TemplateParameter`, `TemplateSendComponent`, `DocumentParameter`, `ImageParameter`, `VideoParameter`, `TextParameter`, `CurrencyParameter`, `CurrencyObject`, `DateTimeParameter`, `DateTimeObject`, `ButtonParameter`, `ButtonPayloadParameter`, `ButtonTextParameter`)
+- All incoming webhook payload types (`IncomingMediaObject`, `IncomingAudioObject`, `IncomingImageObject`, `IncomingVideoObject`, `IncomingDocumentObject`, `IncomingStickerObject`, `IncomingLocationObject`, `IncomingReactionObject`, `IncomingContactEntry`, `IncomingTextObject`, `IncomingMessageBase`, `IncomingContext`, `InteractiveReplyType`, `ButtonReply`, `ListReply`, `IncomingInteractivePayload`, `IncomingButtonObject`, `IncomingErrorData`, `IncomingError`, `ReferralWelcomeMessage`, `ReferralObject`, `OrderProductItem`, `OrderObject`, `SystemObject`)
+- Additional webhook message types (`IncomingOrderMessage`, `IncomingSystemMessage`, `IncomingUnknownMessage`) and group message variants (`GroupMixin`, `IncomingGroupTextMessage`, `IncomingGroupAudioMessage`, `IncomingGroupImageMessage`, `IncomingGroupVideoMessage`, `IncomingGroupDocumentMessage`, `IncomingGroupStickerMessage`, `IncomingGroupLocationMessage`, `IncomingGroupReactionMessage`, `IncomingGroupInteractiveMessage`)
+- Status sub-models (`ConversationOrigin`, `Conversation`, `Pricing`) and notification sub-models (`ChangeField`, `GroupParticipant`, `GroupEventType`, `GroupEvent`, `NotificationContactProfile`, `NotificationContact`)
+- `MessageContext` (outgoing reply context) and `MessageContext` exported from `messages` package
+
+### Fixed
+
+- `TemplateSendComponent.index` type corrected from `str | None` to `int | None`
+
 ## v0.2.4
 
 ### Added

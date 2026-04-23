@@ -1,6 +1,6 @@
 [project]
 name = "whatsapp-models"
-version = "0.2.4"
+version = "0.2.5"
 description = "Pydantic v2 models for the WhatsApp Business API — outgoing messages, incoming webhooks, and template management."
 readme = "README.md"
 license = { file = "LICENSE" }
