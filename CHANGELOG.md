@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.2.4
+
+### Added
+
+- `IncomingMediaObject` — base class for incoming media payload objects with shared fields `id`, `mime_type`, `sha256`, and `url`
+- `url` required field on `IncomingAudioObject`, `IncomingImageObject`, `IncomingVideoObject`, `IncomingDocumentObject`, `IncomingStickerObject`
+
 ## v0.2.3
 
 ### Added

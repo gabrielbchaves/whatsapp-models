@@ -63,7 +63,13 @@ class TestIncomingAudioMessage:
         """IncomingAudioMessage stores media id, mime_type, sha256 and voice."""
         msg = IncomingAudioMessage(
             **BASE,
-            audio={"id": "media_id_1", "mime_type": "audio/ogg; codecs=opus", "sha256": "abc123", "voice": False},
+            audio={
+                "id": "media_id_1",
+                "mime_type": "audio/ogg; codecs=opus",
+                "sha256": "abc123",
+                "url": "https://example.com/audio",
+                "voice": False,
+            },
         )
         assert msg.type == MessageType.audio
         assert msg.audio.id == "media_id_1"
@@ -77,19 +83,32 @@ class TestIncomingAudioMessage:
 class TestIncomingImageMessage:
     def test_basic(self):
         """IncomingImageMessage stores media id, mime_type and sha256."""
-        msg = IncomingImageMessage(**BASE, image={"id": "img_id", "mime_type": "image/jpeg", "sha256": "abc123"})
+        msg = IncomingImageMessage(
+            **BASE,
+            image={"id": "img_id", "mime_type": "image/jpeg", "sha256": "abc123", "url": "https://example.com/image"},
+        )
         assert msg.type == MessageType.image
         assert msg.image.id == "img_id"
 
     def test_caption_optional(self):
         """IncomingImageMessage.image.caption is optional."""
-        msg = IncomingImageMessage(**BASE, image={"id": "img_id", "mime_type": "image/jpeg", "sha256": "abc123"})
+        msg = IncomingImageMessage(
+            **BASE,
+            image={"id": "img_id", "mime_type": "image/jpeg", "sha256": "abc123", "url": "https://example.com/image"},
+        )
         assert msg.image.caption is None
 
     def test_with_caption(self):
         """IncomingImageMessage stores optional caption."""
         msg = IncomingImageMessage(
-            **BASE, image={"id": "img_id", "mime_type": "image/jpeg", "sha256": "abc123", "caption": "foto"}
+            **BASE,
+            image={
+                "id": "img_id",
+                "mime_type": "image/jpeg",
+                "sha256": "abc123",
+                "url": "https://example.com/image",
+                "caption": "foto",
+            },
         )
         assert msg.image.caption == "foto"
 
@@ -97,7 +116,10 @@ class TestIncomingImageMessage:
 class TestIncomingVideoMessage:
     def test_basic(self):
         """IncomingVideoMessage stores media id, mime_type and sha256."""
-        msg = IncomingVideoMessage(**BASE, video={"id": "vid_id", "mime_type": "video/mp4", "sha256": "abc123"})
+        msg = IncomingVideoMessage(
+            **BASE,
+            video={"id": "vid_id", "mime_type": "video/mp4", "sha256": "abc123", "url": "https://example.com/video"},
+        )
         assert msg.type == MessageType.video
         assert msg.video.id == "vid_id"
 
@@ -107,7 +129,13 @@ class TestIncomingDocumentMessage:
         """IncomingDocumentMessage stores media id, mime_type, sha256 and filename."""
         msg = IncomingDocumentMessage(
             **BASE,
-            document={"id": "doc_id", "mime_type": "application/pdf", "sha256": "abc123", "filename": "relatorio.pdf"},
+            document={
+                "id": "doc_id",
+                "mime_type": "application/pdf",
+                "sha256": "abc123",
+                "url": "https://example.com/doc",
+                "filename": "relatorio.pdf",
+            },
         )
         assert msg.type == MessageType.document
         assert msg.document.filename == "relatorio.pdf"
@@ -122,7 +150,14 @@ class TestIncomingStickerMessage:
     def test_basic(self):
         """IncomingStickerMessage stores media id, mime_type, sha256 and animated."""
         msg = IncomingStickerMessage(
-            **BASE, sticker={"id": "stk_id", "mime_type": "image/webp", "sha256": "abc123", "animated": False}
+            **BASE,
+            sticker={
+                "id": "stk_id",
+                "mime_type": "image/webp",
+                "sha256": "abc123",
+                "url": "https://example.com/sticker",
+                "animated": False,
+            },
         )
         assert msg.type == MessageType.sticker
         assert msg.sticker.id == "stk_id"
@@ -254,26 +289,37 @@ class TestIncomingGroupMessages:
     def test_group_audio(self):
         """IncomingGroupAudioMessage stores type audio and media id."""
         msg = IncomingGroupAudioMessage(
-            **GROUP_BASE, audio={"id": "m1", "mime_type": "audio/ogg", "sha256": "x", "voice": False}
+            **GROUP_BASE,
+            audio={"id": "m1", "mime_type": "audio/ogg", "sha256": "x", "url": "https://example.com/a", "voice": False},
         )
         assert msg.type == MessageType.audio
         assert msg.audio.id == "m1"
 
     def test_group_image(self):
         """IncomingGroupImageMessage stores type image and media id."""
-        msg = IncomingGroupImageMessage(**GROUP_BASE, image={"id": "m2", "mime_type": "image/jpeg", "sha256": "x"})
+        msg = IncomingGroupImageMessage(
+            **GROUP_BASE, image={"id": "m2", "mime_type": "image/jpeg", "sha256": "x", "url": "https://example.com/i"}
+        )
         assert msg.type == MessageType.image
 
     def test_group_video(self):
         """IncomingGroupVideoMessage stores type video and media id."""
-        msg = IncomingGroupVideoMessage(**GROUP_BASE, video={"id": "m3", "mime_type": "video/mp4", "sha256": "x"})
+        msg = IncomingGroupVideoMessage(
+            **GROUP_BASE, video={"id": "m3", "mime_type": "video/mp4", "sha256": "x", "url": "https://example.com/v"}
+        )
         assert msg.type == MessageType.video
 
     def test_group_document(self):
         """IncomingGroupDocumentMessage stores type document and filename."""
         msg = IncomingGroupDocumentMessage(
             **GROUP_BASE,
-            document={"id": "m4", "mime_type": "application/pdf", "sha256": "x", "filename": "f.pdf"},
+            document={
+                "id": "m4",
+                "mime_type": "application/pdf",
+                "sha256": "x",
+                "url": "https://example.com/d",
+                "filename": "f.pdf",
+            },
         )
         assert msg.type == MessageType.document
         assert msg.document.filename == "f.pdf"
@@ -281,7 +327,14 @@ class TestIncomingGroupMessages:
     def test_group_sticker(self):
         """IncomingGroupStickerMessage stores type sticker and media id."""
         msg = IncomingGroupStickerMessage(
-            **GROUP_BASE, sticker={"id": "m5", "mime_type": "image/webp", "sha256": "x", "animated": False}
+            **GROUP_BASE,
+            sticker={
+                "id": "m5",
+                "mime_type": "image/webp",
+                "sha256": "x",
+                "url": "https://example.com/s",
+                "animated": False,
+            },
         )
         assert msg.type == MessageType.sticker
 
@@ -321,7 +374,11 @@ class TestIncomingGroupMessageUnion:
     def test_resolves_image(self):
         """IncomingGroupMessage discriminator resolves type='image' to IncomingGroupImageMessage."""
         msg = self.adapter.validate_python(
-            {**GROUP_BASE, "type": "image", "image": {"id": "m1", "mime_type": "image/jpeg", "sha256": "x"}}
+            {
+                **GROUP_BASE,
+                "type": "image",
+                "image": {"id": "m1", "mime_type": "image/jpeg", "sha256": "x", "url": "https://example.com/i"},
+            }
         )
         assert isinstance(msg, IncomingGroupImageMessage)
 
@@ -342,14 +399,28 @@ class TestIncomingMessageUnion:
     def test_resolves_audio(self):
         """IncomingMessage discriminator resolves type='audio' to IncomingAudioMessage."""
         msg = self.adapter.validate_python(
-            {**BASE, "type": "audio", "audio": {"id": "m1", "mime_type": "audio/ogg", "sha256": "x", "voice": False}}
+            {
+                **BASE,
+                "type": "audio",
+                "audio": {
+                    "id": "m1",
+                    "mime_type": "audio/ogg",
+                    "sha256": "x",
+                    "url": "https://example.com/a",
+                    "voice": False,
+                },
+            }
         )
         assert isinstance(msg, IncomingAudioMessage)
 
     def test_resolves_image(self):
         """IncomingMessage discriminator resolves type='image' to IncomingImageMessage."""
         msg = self.adapter.validate_python(
-            {**BASE, "type": "image", "image": {"id": "m1", "mime_type": "image/jpeg", "sha256": "x"}}
+            {
+                **BASE,
+                "type": "image",
+                "image": {"id": "m1", "mime_type": "image/jpeg", "sha256": "x", "url": "https://example.com/i"},
+            }
         )
         assert isinstance(msg, IncomingImageMessage)
 
