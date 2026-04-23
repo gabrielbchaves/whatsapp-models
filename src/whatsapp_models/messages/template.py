@@ -25,7 +25,7 @@ from whatsapp_models.message_templates.send import (
     TextParameter,
 )
 from whatsapp_models.messages.base import MessageBase
-from whatsapp_models.messages.media import MediaObject
+from whatsapp_models.messages.media import OutgoingMediaObject
 
 
 class DocumentParameter(BaseModel):
@@ -38,7 +38,7 @@ class DocumentParameter(BaseModel):
         str | None,
         Field(description="Named parameter identifier as defined in the template. Used with named-variable templates."),
     ] = None
-    document: Annotated[MediaObject, Field(description="Document media object.")]
+    document: Annotated[OutgoingMediaObject, Field(description="Document media object.")]
 
 
 class ImageParameter(BaseModel):
@@ -51,7 +51,7 @@ class ImageParameter(BaseModel):
         str | None,
         Field(description="Named parameter identifier as defined in the template. Used with named-variable templates."),
     ] = None
-    image: Annotated[MediaObject, Field(description="Image media object.")]
+    image: Annotated[OutgoingMediaObject, Field(description="Image media object.")]
 
 
 class VideoParameter(BaseModel):
@@ -64,7 +64,7 @@ class VideoParameter(BaseModel):
         str | None,
         Field(description="Named parameter identifier as defined in the template. Used with named-variable templates."),
     ] = None
-    video: Annotated[MediaObject, Field(description="Video media object.")]
+    video: Annotated[OutgoingMediaObject, Field(description="Video media object.")]
 
 
 TemplateParameter = Annotated[
@@ -88,7 +88,7 @@ class TemplateSendComponent(BaseModel):
         Field(description="Button sub-type. Required when type is 'button'."),
     ] = None
     index: Annotated[
-        str | None,
+        int | None,
         Field(description="Zero-based index of the button. Required when type is 'button'."),
     ] = None
     parameters: Annotated[

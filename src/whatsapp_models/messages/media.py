@@ -16,7 +16,7 @@ from whatsapp_models.common.enums import MessageType
 from whatsapp_models.messages.base import MessageBase
 
 
-class MediaObject(BaseModel):
+class OutgoingMediaObject(BaseModel):
     """Base media object. Exactly one of 'id' or 'link' must be provided."""
 
     model_config = ConfigDict(validate_by_name=True, validate_by_alias=True)
@@ -25,14 +25,14 @@ class MediaObject(BaseModel):
     link: Annotated[str | None, Field(description="Publicly accessible URL of the media file.")] = None
 
     @model_validator(mode="after")
-    def requires_id_or_link(self) -> "MediaObject":
+    def requires_id_or_link(self) -> "OutgoingMediaObject":
         """Ensure that exactly one of 'id' or 'link' is provided."""
         if self.id is None and self.link is None:
             raise ValueError("Either 'id' or 'link' must be provided.")
         return self
 
 
-class CaptionedMediaObject(MediaObject):
+class CaptionedMediaObject(OutgoingMediaObject):
     """Media object that supports an optional text caption."""
 
     caption: Annotated[
@@ -46,7 +46,7 @@ class DocumentObject(CaptionedMediaObject):
     filename: Annotated[str | None, Field(description="Filename shown to the recipient for the document.")] = None
 
 
-class AudioMediaObject(MediaObject):
+class AudioMediaObject(OutgoingMediaObject):
     """Audio media object with optional voice flag for PTT (push-to-talk) messages."""
 
     voice: Annotated[
@@ -102,4 +102,4 @@ class StickerMessage(MessageBase):
         Literal[MessageType.sticker],
         Field(description="Message type discriminator."),
     ] = MessageType.sticker
-    sticker: Annotated[MediaObject, Field(description="Sticker media object.")]
+    sticker: Annotated[OutgoingMediaObject, Field(description="Sticker media object.")]
