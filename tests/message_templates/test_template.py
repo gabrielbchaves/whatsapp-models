@@ -8,7 +8,7 @@ from whatsapp_models.message_templates.template import CreateTemplateRequest, Te
 
 
 class TestCreateTemplateRequest:
-    def test_minimal(self):
+    def test_minimal(self) -> None:
         """CreateTemplateRequest accepts minimal required fields."""
         req = CreateTemplateRequest(
             name="hello_world",
@@ -20,53 +20,55 @@ class TestCreateTemplateRequest:
         assert req.category == TemplateCategory.UTILITY
         assert req.components == []
 
-    def test_with_components(self):
+    def test_with_components(self) -> None:
         """CreateTemplateRequest stores a list of template components."""
-        req = CreateTemplateRequest(
-            name="order_confirm",
-            language="pt_BR",
-            category=TemplateCategory.UTILITY,
-            components=[
-                {"type": "BODY", "text": "Pedido {{1}} confirmado."},
-                {"type": "FOOTER", "text": "Dúvidas? Fale conosco."},
-            ],
+        req = CreateTemplateRequest.model_validate(
+            {
+                "name": "order_confirm",
+                "language": "pt_BR",
+                "category": TemplateCategory.UTILITY,
+                "components": [
+                    {"type": "BODY", "text": "Pedido {{1}} confirmado."},
+                    {"type": "FOOTER", "text": "Dúvidas? Fale conosco."},
+                ],
+            }
         )
         assert len(req.components) == 2
 
-    def test_requires_name(self):
+    def test_requires_name(self) -> None:
         """CreateTemplateRequest raises ValidationError when name is missing."""
         with pytest.raises(ValidationError):
-            CreateTemplateRequest(language="pt_BR", category=TemplateCategory.UTILITY)
+            CreateTemplateRequest.model_validate({"language": "pt_BR", "category": TemplateCategory.UTILITY})
 
-    def test_requires_language(self):
+    def test_requires_language(self) -> None:
         """CreateTemplateRequest raises ValidationError when language is missing."""
         with pytest.raises(ValidationError):
-            CreateTemplateRequest(name="hello", category=TemplateCategory.UTILITY)
+            CreateTemplateRequest.model_validate({"name": "hello", "category": TemplateCategory.UTILITY})
 
-    def test_requires_category(self):
+    def test_requires_category(self) -> None:
         """CreateTemplateRequest raises ValidationError when category is missing."""
         with pytest.raises(ValidationError):
-            CreateTemplateRequest(name="hello", language="pt_BR")
+            CreateTemplateRequest.model_validate({"name": "hello", "language": "pt_BR"})
 
-    def test_serialization(self):
+    def test_serialization(self) -> None:
         """CreateTemplateRequest serializes category as plain string."""
         req = CreateTemplateRequest(name="t", language="pt_BR", category=TemplateCategory.MARKETING)
         assert req.model_dump()["category"] == "MARKETING"
 
 
 class TestTemplateResponse:
-    def test_basic(self):
+    def test_basic(self) -> None:
         """TemplateResponse parses API creation response correctly."""
         resp = TemplateResponse(id="tpl_123", status=TemplateStatus.PENDING, category=TemplateCategory.UTILITY)
         assert resp.id == "tpl_123"
         assert resp.status == TemplateStatus.PENDING
 
-    def test_requires_id_and_status(self):
+    def test_requires_id_and_status(self) -> None:
         """TemplateResponse raises ValidationError when id or status is missing."""
         with pytest.raises(ValidationError):
-            TemplateResponse(status=TemplateStatus.APPROVED)
+            TemplateResponse.model_validate({"status": TemplateStatus.APPROVED})
 
-    def test_serializes_status_as_string(self):
+    def test_serializes_status_as_string(self) -> None:
         """TemplateResponse serializes status as plain string."""
         resp = TemplateResponse(id="x", status=TemplateStatus.APPROVED, category=TemplateCategory.UTILITY)
         assert resp.model_dump()["status"] == "APPROVED"

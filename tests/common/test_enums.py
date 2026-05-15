@@ -14,7 +14,7 @@ from whatsapp_models.common.enums import (
 
 
 class TestMessageType:
-    def test_all_outgoing_types_present(self):
+    def test_all_outgoing_types_present(self) -> None:
         """All bidirectional message types are members of MessageType."""
         expected = {
             "text",
@@ -31,58 +31,58 @@ class TestMessageType:
         }
         assert expected.issubset({m.value for m in MessageType})
 
-    def test_all_incoming_only_types_present(self):
+    def test_all_incoming_only_types_present(self) -> None:
         """Incoming-only types button and unsupported are members of MessageType."""
         assert {"button", "unsupported"}.issubset({m.value for m in MessageType})
 
-    def test_is_str(self):
+    def test_is_str(self) -> None:
         """MessageType members are plain strings."""
         assert isinstance(MessageType.text, str)
         assert MessageType.text == "text"
 
-    def test_serializes_as_plain_string(self):
+    def test_serializes_as_plain_string(self) -> None:
         """MessageType members serialize to plain JSON strings."""
         assert json.dumps(MessageType.audio) == '"audio"'
 
 
 class TestLanguage:
-    def test_common_languages_present(self):
+    def test_common_languages_present(self) -> None:
         """Common language codes are members of Language."""
         expected = {"pt_BR", "en_US", "es_ES", "es_MX", "pt_PT"}
         assert expected.issubset({lang.value for lang in Language})
 
-    def test_is_str(self):
+    def test_is_str(self) -> None:
         """Language members are plain strings."""
         assert isinstance(Language.pt_BR, str)
         assert Language.pt_BR == "pt_BR"
 
 
 class TestCurrency:
-    def test_common_currencies_present(self):
+    def test_common_currencies_present(self) -> None:
         """Common currency codes are members of Currency."""
         assert {"BRL", "USD", "EUR"}.issubset({c.value for c in Currency})
 
-    def test_is_str(self):
+    def test_is_str(self) -> None:
         """Currency members are plain strings."""
         assert isinstance(Currency.BRL, str)
         assert Currency.BRL == "BRL"
 
 
 class TestContactEntryTypes:
-    def test_address_type_values(self):
+    def test_address_type_values(self) -> None:
         """AddressType has exactly HOME and WORK."""
         assert set(AddressType) == {AddressType.HOME, AddressType.WORK}
         assert AddressType.HOME == "HOME"
         assert AddressType.WORK == "WORK"
 
-    def test_phone_type_values(self):
+    def test_phone_type_values(self) -> None:
         """PhoneType has exactly CELL, MAIN, IPHONE, HOME and WORK."""
         assert {t.value for t in PhoneType} == {"CELL", "MAIN", "IPHONE", "HOME", "WORK"}
 
-    def test_email_type_values(self):
+    def test_email_type_values(self) -> None:
         """EmailType has exactly HOME and WORK."""
         assert set(EmailType) == {EmailType.HOME, EmailType.WORK}
 
-    def test_url_type_values(self):
+    def test_url_type_values(self) -> None:
         """UrlType has exactly HOME and WORK."""
         assert set(UrlType) == {UrlType.HOME, UrlType.WORK}
