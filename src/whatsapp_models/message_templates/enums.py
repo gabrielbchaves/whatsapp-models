@@ -25,6 +25,15 @@ class TemplateStatus(StrEnum):
     IN_APPEAL = "IN_APPEAL"
 
 
+class TemplateQualityScore(StrEnum):
+    """Quality score tier for a WhatsApp message template."""
+
+    GREEN = "GREEN"
+    YELLOW = "YELLOW"
+    RED = "RED"
+    UNKNOWN = "UNKNOWN"
+
+
 class ComponentType(StrEnum):
     """Type of a template component."""
 

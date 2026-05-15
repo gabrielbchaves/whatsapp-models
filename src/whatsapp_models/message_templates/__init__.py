@@ -15,6 +15,7 @@ from whatsapp_models.message_templates.enums import (
     ComponentType,
     HeaderFormat,
     TemplateCategory,
+    TemplateQualityScore,
     TemplateStatus,
 )
 from whatsapp_models.message_templates.send import (
@@ -53,6 +54,7 @@ __all__ = [
     "TemplateCategory",
     "TemplateComponent",
     "TemplateLanguage",
+    "TemplateQualityScore",
     "TemplateResponse",
     "TemplateStatus",
     "TextParameter",

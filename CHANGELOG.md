@@ -1,5 +1,17 @@
 # Changelog
 
+## v0.2.6
+
+### Added
+
+- `TemplateQualityScore`, `TemplateStatusUpdateValue`, `TemplateQualityUpdateValue` models for `message_template_status_update` and `message_template_quality_update` webhook change fields
+- New `ChangeField` values: `message_template_status_update`, `message_template_quality_update`
+- `Change.value` now automatically coerces to the correct value type based on the `field` discriminator
+
+### Fixed
+
+- `IncomingContext.id` is now optional (`str | None = None`) to handle forwarded messages where the `context` object is present but has no `id` field
+
 ## v0.2.5
 
 ### Added

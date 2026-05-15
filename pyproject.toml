@@ -1,6 +1,6 @@
 [project]
 name = "whatsapp-models"
-version = "0.2.5"
+version = "0.2.6"
 description = "Pydantic v2 models for the WhatsApp Business API — outgoing messages, incoming webhooks, and template management."
 readme = "README.md"
 license = { file = "LICENSE" }
@@ -48,6 +48,8 @@ ignore = [
   "N815",
   # ValueError inside pydantic model_validator is idiomatic — no need to extract message
   "EM101", "TRY003",
+  # `import X as X` is the PEP 484 idiom for explicit re-exports; mypy requires it
+  "PLC0414",
 ]
 
 [tool.ruff.lint.per-file-ignores]

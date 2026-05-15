@@ -7,7 +7,7 @@ from whatsapp_models.webhooks.errors import WebhookError
 
 
 class TestWebhookError:
-    def test_basic(self):
+    def test_basic(self) -> None:
         """WebhookError stores code, title, message and error_data."""
         err = WebhookError(
             code=131047,
@@ -19,13 +19,13 @@ class TestWebhookError:
         assert err.title == "Re-engagement message"
         assert err.error_data == {"details": "some detail"}
 
-    def test_optional_fields(self):
+    def test_optional_fields(self) -> None:
         """WebhookError can be constructed with only code and title."""
         err = WebhookError(code=131047, title="Some error")
         assert err.message is None
         assert err.error_data is None
 
-    def test_requires_code_and_title(self):
+    def test_requires_code_and_title(self) -> None:
         """WebhookError raises ValidationError when code is missing."""
         with pytest.raises(ValidationError):
-            WebhookError(title="Some error")
+            WebhookError.model_validate({"title": "Some error"})

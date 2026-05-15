@@ -9,7 +9,7 @@ RECIPIENT = "5511999999999"
 
 
 class TestDeliveryStatus:
-    def test_values(self):
+    def test_values(self) -> None:
         """DeliveryStatus enum covers sent, delivered, read and failed."""
         assert DeliveryStatus.sent == "sent"
         assert DeliveryStatus.delivered == "delivered"
@@ -18,7 +18,7 @@ class TestDeliveryStatus:
 
 
 class TestMessageStatus:
-    def test_basic(self):
+    def test_basic(self) -> None:
         """MessageStatus stores id, status, timestamp and recipient_id."""
         status = MessageStatus(
             id="wamid.abc123",
@@ -31,7 +31,7 @@ class TestMessageStatus:
         assert status.timestamp == "1700000000"
         assert status.recipient_id == RECIPIENT
 
-    def test_errors_optional(self):
+    def test_errors_optional(self) -> None:
         """MessageStatus.errors defaults to None or empty when omitted."""
         status = MessageStatus(
             id="wamid.abc123",
@@ -41,19 +41,21 @@ class TestMessageStatus:
         )
         assert status.errors == []
 
-    def test_with_errors(self):
+    def test_with_errors(self) -> None:
         """MessageStatus accepts a list of WebhookError objects."""
-        status = MessageStatus(
-            id="wamid.abc123",
-            status=DeliveryStatus.failed,
-            timestamp="1700000000",
-            recipient_id=RECIPIENT,
-            errors=[{"code": 131047, "title": "Re-engagement message"}],
+        status = MessageStatus.model_validate(
+            {
+                "id": "wamid.abc123",
+                "status": DeliveryStatus.failed,
+                "timestamp": "1700000000",
+                "recipient_id": RECIPIENT,
+                "errors": [{"code": 131047, "title": "Re-engagement message"}],
+            }
         )
         assert len(status.errors) == 1
         assert status.errors[0].code == 131047
 
-    def test_requires_id_status_timestamp_recipient(self):
+    def test_requires_id_status_timestamp_recipient(self) -> None:
         """MessageStatus raises ValidationError when required fields are missing."""
         with pytest.raises(ValidationError):
-            MessageStatus(id="wamid.abc123", status=DeliveryStatus.sent)
+            MessageStatus.model_validate({"id": "wamid.abc123", "status": DeliveryStatus.sent})

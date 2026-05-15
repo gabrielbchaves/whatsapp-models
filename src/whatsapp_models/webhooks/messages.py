@@ -26,7 +26,7 @@ class IncomingContext(BaseModel):
     model_config = ConfigDict(validate_by_name=True, validate_by_alias=True)
 
     from_: Annotated[str | None, Field(alias="from", description="Phone number of the original message sender.")] = None
-    id: Annotated[str, Field(description="Message ID of the quoted message.")]
+    id: Annotated[str | None, Field(description="Message ID of the quoted message.")] = None
 
 
 class IncomingMessageBase(BaseModel):
