@@ -58,6 +58,89 @@ class TestIncomingTextMessage:
         assert data["from"] == FROM
 
 
+REFERRAL = {
+    "source_url": "https://fb.me/3cr4Wqqkv",
+    "source_id": "120226305854810726",
+    "source_type": "ad",
+    "headline": "Chat with us",
+    "body": "Summer Succulents are here!",
+    "media_type": "image",
+    "image_url": "https://example.com/ad.jpg",
+    "ctwa_clid": "Aff-n8ZTODiE79d22KtAwQKj9e_mIEOOj27vDVwFjN80dp4",
+    "ref": "ref_123",
+}
+IMAGE = {"id": "media_id_2", "mime_type": "image/jpeg", "sha256": "def456", "url": "https://example.com/media"}
+
+
+class TestReferral:
+    def test_text_message_with_full_referral(self) -> None:
+        """IncomingTextMessage parses every referral field, including ref."""
+        msg = IncomingTextMessage.model_validate({**BASE, "text": {"body": "hi"}, "referral": REFERRAL})
+        assert msg.referral is not None
+        assert msg.referral.source_url == REFERRAL["source_url"]
+        assert msg.referral.source_id == REFERRAL["source_id"]
+        assert msg.referral.source_type == "ad"
+        assert msg.referral.headline == REFERRAL["headline"]
+        assert msg.referral.body == REFERRAL["body"]
+        assert msg.referral.media_type == "image"
+        assert msg.referral.image_url == REFERRAL["image_url"]
+        assert msg.referral.ctwa_clid == REFERRAL["ctwa_clid"]
+        assert msg.referral.ref == "ref_123"
+
+    def test_referral_without_ctwa_clid(self) -> None:
+        """Referral from a WhatsApp Status ad omits ctwa_clid."""
+        referral = {k: v for k, v in REFERRAL.items() if k != "ctwa_clid"}
+        msg = IncomingTextMessage.model_validate({**BASE, "text": {"body": "hi"}, "referral": referral})
+        assert msg.referral is not None
+        assert msg.referral.ctwa_clid is None
+
+    def test_referral_optional_fields_default_to_none(self) -> None:
+        """Referral optional fields default to None when absent."""
+        optional = {"ref", "ctwa_clid", "image_url"}
+        referral = {k: v for k, v in REFERRAL.items() if k not in optional}
+        msg = IncomingTextMessage.model_validate({**BASE, "text": {"body": "hi"}, "referral": referral})
+        assert msg.referral is not None
+        assert msg.referral.ref is None
+        assert msg.referral.ctwa_clid is None
+        assert msg.referral.image_url is None
+        assert msg.referral.video_url is None
+        assert msg.referral.thumbnail_url is None
+        assert msg.referral.welcome_message is None
+
+    @pytest.mark.parametrize("field", ["headline", "body", "media_type"])
+    def test_referral_requires_headline_body_media_type(self, field: str) -> None:
+        """Referral raises ValidationError when headline, body or media_type is missing."""
+        referral = {k: v for k, v in REFERRAL.items() if k != field}
+        with pytest.raises(ValidationError):
+            IncomingTextMessage.model_validate({**BASE, "text": {"body": "hi"}, "referral": referral})
+
+    def test_referral_absent_defaults_to_none(self) -> None:
+        """Messages without a referral have referral set to None."""
+        msg = IncomingTextMessage.model_validate({**BASE, "text": {"body": "hi"}})
+        assert msg.referral is None
+
+    def test_referral_on_non_text_message(self) -> None:
+        """Referral is available on non-text messages via IncomingMessageBase."""
+        msg = IncomingImageMessage.model_validate({**BASE, "image": IMAGE, "referral": REFERRAL})
+        assert msg.referral is not None
+        assert msg.referral.ref == "ref_123"
+
+    def test_union_preserves_referral(self) -> None:
+        """IncomingMessage union keeps the referral when resolving the message type."""
+        adapter: TypeAdapter[IncomingMessage] = TypeAdapter(IncomingMessage)
+        msg = adapter.validate_python({**BASE, "type": "image", "image": IMAGE, "referral": REFERRAL})
+        assert isinstance(msg, IncomingImageMessage)
+        assert msg.referral is not None
+        assert msg.referral.source_id == REFERRAL["source_id"]
+
+    def test_invalid_source_type_raises(self) -> None:
+        """Referral raises ValidationError for an unknown source_type."""
+        with pytest.raises(ValidationError):
+            IncomingTextMessage.model_validate(
+                {**BASE, "text": {"body": "hi"}, "referral": {**REFERRAL, "source_type": "story"}}
+            )
+
+
 class TestIncomingAudioMessage:
     def test_basic(self) -> None:
         """IncomingAudioMessage stores media id, mime_type, sha256 and voice."""

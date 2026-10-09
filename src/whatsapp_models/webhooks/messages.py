@@ -29,6 +29,34 @@ class IncomingContext(BaseModel):
     id: Annotated[str | None, Field(description="Message ID of the quoted message.")] = None
 
 
+class ReferralWelcomeMessage(BaseModel):
+    """Welcome message attached to a referral (click-to-WhatsApp ad)."""
+
+    text: Annotated[str, Field(description="Welcome message text pre-filled from the ad.")]
+
+
+class ReferralObject(BaseModel):
+    """Referral context present when the message originated from a click-to-WhatsApp ad."""
+
+    source_url: Annotated[str, Field(description="URL of the ad or post that triggered the message.")]
+    source_id: Annotated[str, Field(description="ID of the ad or post.")]
+    source_type: Annotated[Literal["ad", "post"], Field(description="Type of the referral source.")]
+    body: Annotated[str, Field(description="Body text of the ad.")]
+    headline: Annotated[str, Field(description="Headline of the ad.")]
+    media_type: Annotated[Literal["image", "video"], Field(description="Media type featured in the ad.")]
+    ctwa_clid: Annotated[
+        str | None,
+        Field(description="Click-to-WhatsApp click ID for analytics. Omitted for ads in WhatsApp Status."),
+    ] = None
+    ref: Annotated[str | None, Field(description="Reference ID passed through the ad's click-to-WhatsApp link.")] = None
+    image_url: Annotated[str | None, Field(description="URL of the ad image, if media_type is 'image'.")] = None
+    video_url: Annotated[str | None, Field(description="URL of the ad video, if media_type is 'video'.")] = None
+    thumbnail_url: Annotated[str | None, Field(description="Thumbnail URL of the ad media.")] = None
+    welcome_message: Annotated[
+        ReferralWelcomeMessage | None, Field(description="Pre-filled welcome message from the ad.")
+    ] = None
+
+
 class IncomingMessageBase(BaseModel):
     """Fields common to every incoming WhatsApp message."""
 
@@ -40,6 +68,10 @@ class IncomingMessageBase(BaseModel):
     context: Annotated[
         IncomingContext | None,
         Field(description="Context of a quoted/replied message, when present."),
+    ] = None
+    referral: Annotated[
+        ReferralObject | None,
+        Field(description="Referral context when the message originated from an ad or post."),
     ] = None
 
 
@@ -62,15 +94,11 @@ class GroupMixin(BaseModel):
 class IncomingTextObject(BaseModel):
     """Text content of an incoming text message."""
 
-    model_config = ConfigDict(validate_by_name=True, validate_by_alias=True)
-
     body: Annotated[str, Field(description="Text body of the message.")]
 
 
 class IncomingMediaObject(BaseModel):
     """Base class for incoming media payload objects."""
-
-    model_config = ConfigDict(validate_by_name=True, validate_by_alias=True)
 
     id: Annotated[str, Field(description="Media asset ID assigned by WhatsApp.")]
     mime_type: Annotated[str, Field(description="MIME type of the media file.")]
@@ -111,8 +139,6 @@ class IncomingStickerObject(IncomingMediaObject):
 class IncomingLocationObject(BaseModel):
     """Location payload of an incoming location message."""
 
-    model_config = ConfigDict(validate_by_name=True, validate_by_alias=True)
-
     latitude: Annotated[float, Field(description="Latitude of the shared location.")]
     longitude: Annotated[float, Field(description="Longitude of the shared location.")]
     name: Annotated[str, Field(description="Name of the location.")]
@@ -123,16 +149,12 @@ class IncomingLocationObject(BaseModel):
 class IncomingReactionObject(BaseModel):
     """Reaction payload of an incoming reaction message."""
 
-    model_config = ConfigDict(validate_by_name=True, validate_by_alias=True)
-
     message_id: Annotated[str, Field(description="ID of the message that was reacted to.")]
     emoji: Annotated[str, Field(description="Emoji used as reaction.")]
 
 
 class IncomingContactEntry(BaseModel):
     """A single contact entry inside an incoming contacts message."""
-
-    model_config = ConfigDict(validate_by_name=True, validate_by_alias=True)
 
     name: Annotated[ContactName | None, Field(description="Name information of the contact.")] = None
     addresses: Annotated[Sequence[Address], Field(description="List of physical addresses.")] = []
@@ -146,16 +168,12 @@ class IncomingContactEntry(BaseModel):
 class ButtonReply(BaseModel):
     """Button reply payload inside an incoming interactive message."""
 
-    model_config = ConfigDict(validate_by_name=True, validate_by_alias=True)
-
     id: Annotated[str, Field(description="Button ID from the original message.")]
     title: Annotated[str, Field(description="Button title from the original message.")]
 
 
 class ListReply(BaseModel):
     """List reply payload inside an incoming interactive message."""
-
-    model_config = ConfigDict(validate_by_name=True, validate_by_alias=True)
 
     id: Annotated[str, Field(description="Row ID selected by the user.")]
     title: Annotated[str, Field(description="Row title selected by the user.")]
@@ -164,8 +182,6 @@ class ListReply(BaseModel):
 
 class IncomingInteractivePayload(BaseModel):
     """Payload of an incoming interactive reply (button or list)."""
-
-    model_config = ConfigDict(validate_by_name=True, validate_by_alias=True)
 
     type: Annotated[InteractiveReplyType, Field(description="Interactive reply type.")]
     button_reply: Annotated[
@@ -179,8 +195,6 @@ class IncomingInteractivePayload(BaseModel):
 class IncomingButtonObject(BaseModel):
     """Quick reply button payload from a template message response."""
 
-    model_config = ConfigDict(validate_by_name=True, validate_by_alias=True)
-
     text: Annotated[str, Field(description="Button text shown to the user.")]
     payload: Annotated[str, Field(description="Payload string set in the template button.")]
 
@@ -188,15 +202,11 @@ class IncomingButtonObject(BaseModel):
 class IncomingErrorData(BaseModel):
     """Details object nested inside an incoming error entry."""
 
-    model_config = ConfigDict(validate_by_name=True, validate_by_alias=True)
-
     details: Annotated[str, Field(description="Human-readable error detail string.")]
 
 
 class IncomingError(BaseModel):
     """Error entry present in unsupported/unknown message payloads."""
-
-    model_config = ConfigDict(validate_by_name=True, validate_by_alias=True)
 
     code: Annotated[int, Field(description="Error code.")]
     title: Annotated[str, Field(description="Short error title.")]
@@ -205,38 +215,8 @@ class IncomingError(BaseModel):
     href: Annotated[str | None, Field(description="Link to error documentation.")] = None
 
 
-class ReferralWelcomeMessage(BaseModel):
-    """Welcome message attached to a referral (click-to-WhatsApp ad)."""
-
-    model_config = ConfigDict(validate_by_name=True, validate_by_alias=True)
-
-    text: Annotated[str, Field(description="Welcome message text pre-filled from the ad.")]
-
-
-class ReferralObject(BaseModel):
-    """Referral context present when the message originated from a click-to-WhatsApp ad."""
-
-    model_config = ConfigDict(validate_by_name=True, validate_by_alias=True)
-
-    source_url: Annotated[str, Field(description="URL of the ad or post that triggered the message.")]
-    source_id: Annotated[str, Field(description="ID of the ad or post.")]
-    source_type: Annotated[Literal["ad", "post"], Field(description="Type of the referral source.")]
-    body: Annotated[str, Field(description="Body text of the ad.")]
-    headline: Annotated[str, Field(description="Headline of the ad.")]
-    media_type: Annotated[Literal["image", "video"], Field(description="Media type featured in the ad.")]
-    ctwa_clid: Annotated[str, Field(description="Click-to-WhatsApp click ID for analytics.")]
-    image_url: Annotated[str | None, Field(description="URL of the ad image, if media_type is 'image'.")] = None
-    video_url: Annotated[str | None, Field(description="URL of the ad video, if media_type is 'video'.")] = None
-    thumbnail_url: Annotated[str | None, Field(description="Thumbnail URL of the ad media.")] = None
-    welcome_message: Annotated[
-        ReferralWelcomeMessage | None, Field(description="Pre-filled welcome message from the ad.")
-    ] = None
-
-
 class OrderProductItem(BaseModel):
     """A single product line inside an incoming order message."""
-
-    model_config = ConfigDict(validate_by_name=True, validate_by_alias=True)
 
     product_retailer_id: Annotated[str, Field(description="Retailer-defined product ID.")]
     quantity: Annotated[int, Field(description="Quantity ordered.")]
@@ -247,8 +227,6 @@ class OrderProductItem(BaseModel):
 class OrderObject(BaseModel):
     """Order payload of an incoming order message."""
 
-    model_config = ConfigDict(validate_by_name=True, validate_by_alias=True)
-
     catalog_id: Annotated[str, Field(description="ID of the WhatsApp catalog.")]
     text: Annotated[str, Field(description="Optional note from the buyer.")]
     product_items: Annotated[Sequence[OrderProductItem], Field(description="List of ordered products.")]
@@ -256,8 +234,6 @@ class OrderObject(BaseModel):
 
 class SystemObject(BaseModel):
     """System event payload for number-change notifications."""
-
-    model_config = ConfigDict(validate_by_name=True, validate_by_alias=True)
 
     body: Annotated[str, Field(description="Human-readable description of the system event.")]
     wa_id: Annotated[str | None, Field(description="New WhatsApp ID after a number change.")] = None
@@ -277,9 +253,6 @@ class IncomingTextMessage(IncomingMessageBase):
 
     type: Annotated[Literal[MessageType.text], Field(description="Message type discriminator.")] = MessageType.text
     text: Annotated[IncomingTextObject, Field(description="Text content.")]
-    referral: Annotated[
-        ReferralObject | None, Field(description="Referral context when the message originated from an ad.")
-    ] = None
 
 
 class IncomingAudioMessage(IncomingMessageBase):
