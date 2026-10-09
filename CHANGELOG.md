@@ -1,5 +1,20 @@
 # Changelog
 
+## v0.2.7
+
+### Added
+
+- `ReferralObject.ref` field for the reference ID sent in click-to-WhatsApp referrals
+- `referral` is now available on every incoming message type via `IncomingMessageBase` (previously only on `IncomingTextMessage`)
+
+### Changed
+
+- Removed no-op `model_config` from incoming webhook models that have no aliased fields
+
+### Fixed
+
+- `ReferralObject.ctwa_clid` is now optional (`str | None = None`), since it is omitted for messages originating from an ad in WhatsApp Status
+
 ## v0.2.6
 
 ### Added
