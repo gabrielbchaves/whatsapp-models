@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.2.8
+
+### Fixed
+
+- `IncomingReactionObject.emoji` is now optional, since it is absent from the payload when a reaction is removed
+
 ## v0.2.7
 
 ### Added

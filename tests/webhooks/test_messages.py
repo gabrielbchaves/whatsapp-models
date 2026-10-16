@@ -311,10 +311,15 @@ class TestIncomingReactionMessage:
         assert msg.type == MessageType.reaction
         assert msg.reaction.emoji == "👍"
 
-    def test_requires_message_id_and_emoji(self) -> None:
-        """IncomingReactionMessage raises ValidationError when emoji is missing."""
+    def test_emoji_absent_when_reaction_removed(self) -> None:
+        """IncomingReactionMessage accepts a missing emoji (reaction removed)."""
+        msg = IncomingReactionMessage.model_validate({**BASE, "reaction": {"message_id": "wamid.orig"}})
+        assert msg.reaction.emoji is None
+
+    def test_requires_message_id(self) -> None:
+        """IncomingReactionMessage raises ValidationError when message_id is missing."""
         with pytest.raises(ValidationError):
-            IncomingReactionMessage.model_validate({**BASE, "reaction": {"message_id": "wamid.orig"}})
+            IncomingReactionMessage.model_validate({**BASE, "reaction": {"emoji": "👍"}})
 
 
 class TestIncomingContactsMessage:
