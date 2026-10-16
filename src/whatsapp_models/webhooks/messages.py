@@ -150,7 +150,9 @@ class IncomingReactionObject(BaseModel):
     """Reaction payload of an incoming reaction message."""
 
     message_id: Annotated[str, Field(description="ID of the message that was reacted to.")]
-    emoji: Annotated[str, Field(description="Emoji used as reaction.")]
+    emoji: Annotated[str | None, Field(description="Emoji used as reaction. Absent when the reaction was removed.")] = (
+        None
+    )
 
 
 class IncomingContactEntry(BaseModel):
